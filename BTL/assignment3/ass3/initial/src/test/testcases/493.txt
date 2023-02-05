@@ -1,0 +1,15 @@
+
+        int main()
+        {
+            int n, i, sum;
+            sum = 0;
+            
+            printf("Enter a positive integer: ");
+            for(i=1; i <= n; i=i+1)
+            {
+                sum = sum + i;   // sum = sum+i;
+            }
+            return 0;
+        }
+        
+        

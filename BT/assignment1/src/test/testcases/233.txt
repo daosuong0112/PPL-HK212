@@ -1,0 +1,7 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : A = New A(x);
+                            Var y : Array[Array[String,3],5];
+                        }
+                    }

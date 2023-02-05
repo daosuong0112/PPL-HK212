@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x,z : A = New A(x), New B();
+                        }
+                    }

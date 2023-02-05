@@ -1,0 +1,38 @@
+fragment SEQ: [0-9] | [1-9] ([0-9] [0-9] | [0-9]);
+IPV4: SEQ '.' SEQ '.' SEQ '.' SEQ;
+
+---------------------------------
+
+program: decls EOF;
+decls: vardecl decls;
+vardecl: IDEN EQ expr SEMI;
+expr: exp1 DQUES exp1 | exp1;
+exp1: exp2 (ADD | SUB) exp1 | exp2;
+exp2: exp2 (MUL | DIV | MOD) exp3 | exp3;
+exp3: exp4 DSTAR exp3 | exp4;
+exp4: exp4 ARROW exp5 | exp5;
+exp5: LP expr RP | operands;
+operands: IDEN | INTLIT | FLOATLIT | STRINGLIT | anonyfunc | call;
+anonyfunc: FN LP (idenlist | ) RP ARROW expr;
+call: object LP (exprlist | ) RP;
+object: IDEN | anonyfunc | call;
+idenlist: IDEN COMMA idenlist | IDEN;
+
+----------------------------------
+
+def visitProgram(self, ctx: Parser.ProgramContext)
+	return self.visit(ctx.decls())
+
+def visitDecls(self, ctx: Parser.DeclsContext)
+	return list(reduce(lambda x,y : VarDecl(x[0], x[1], self.visit(ctx.typ()), y), y[0], self.visit(ctx.decl())[1:])) 
+
+def visitDecl(self, ctx: Parser.DeclContext)
+	# vd: sym a,...b @ float;
+	# [(a, False), (b, True)]
+	return list(map(lambda x : self.visit(x), ctx.var())) 
+
+def visitVar(self, ctx: Parser.VarContext)
+	return (ctx.ID().getText(), True) if ctx.TDOTS() else (ctx.ID().getText(), False)
+
+def visitTyp(self, ctx: Parser.TypContext)
+	return IntType() if ctx.INT() else FloatType()

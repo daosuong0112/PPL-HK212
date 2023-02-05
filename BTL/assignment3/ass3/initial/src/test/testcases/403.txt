@@ -1,0 +1,8 @@
+
+        int a;
+        boolean b;
+        string c;
+        float d;
+        float a;
+        void main(){}
+        

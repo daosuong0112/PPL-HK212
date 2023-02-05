@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x,y,z : String = "She is tall", "He asked me: '"Where's John?'"", "He asked me: '"He asked: '"Where's John?'"'"";
+                        }
+                    }

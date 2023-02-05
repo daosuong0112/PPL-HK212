@@ -1,0 +1,7 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : String = a +. b;
+                            Var y : Boolean = a ==. b;
+                        }
+                    }

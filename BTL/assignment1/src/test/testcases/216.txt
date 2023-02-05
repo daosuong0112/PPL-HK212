@@ -1,0 +1,16 @@
+ Class main{
+                        Var a : Float = 5.0;
+                        Var b : String = "abc";
+                        $getHeight() {
+                            Val a : Int = -3;
+                            Val b : Float = c + Shape::$height;
+                            Foreach (x In 5 .. 2 By 8) {
+                                If (a == 2) {
+                                    b = -2;
+                                }
+                                Foreach (x In 5 .. 2 By 2) {
+                                    Out.printInt(arr[x]);
+                                }
+                            }
+                        }
+                    } 

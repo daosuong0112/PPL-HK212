@@ -1,0 +1,5 @@
+ Class Program {
+                        Constructor(a : Int) {
+                            arr[1] = 2;
+                        }
+                    } 

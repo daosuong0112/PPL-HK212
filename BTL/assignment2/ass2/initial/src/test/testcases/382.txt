@@ -1,0 +1,12 @@
+ Class Program {
+                        getArea() {
+                            Foreach (x In 5 .. 2) {
+                                Out.printInt(arr[x] + arr[3]);
+                                Var r, s: Int;
+                                r = 2.0;
+                                Var a, b: Array[Int, 5];
+                                s = r * r * Self.myPI;
+                                a[0] = s;
+                            }
+                        }
+                    } 

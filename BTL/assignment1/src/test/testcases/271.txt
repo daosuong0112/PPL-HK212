@@ -1,0 +1,5 @@
+ Class Program {
+                        getArea() {
+                            Shape.getArea = arr[1] + arr[2] ;
+                        }
+                    } 

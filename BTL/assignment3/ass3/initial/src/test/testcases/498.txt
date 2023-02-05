@@ -1,0 +1,40 @@
+
+        float calculateSD(float data[])
+        {
+            float sum, mean, standardDeviation;
+            sum = 0.0;
+            standardDeviation = 0.0;
+            int i;
+            for(i=0; i<10; i=i+1)
+            {
+                sum = sum + data[i];
+            }
+            mean = sum/10;
+            for(i=0; i<10; i=i+1)
+                standardDeviation = standardDeviation + pow(data[i] - mean, 2);
+            return sqrt(standardDeviation/10);
+        }
+        float sqrt(float num){
+            return num;
+        }
+        float pow(float num, int exp){
+            int i;
+            for (i = 1; i <= exp; i=i+1)
+                num = num * num;
+            return num;
+        }
+        void printf(string str){
+            return;
+        }
+        void printInt(int num){
+            return;
+        }
+        void main(){
+            int i;
+            float data[10];
+            printf("Enter 10 elements: ");
+            for(i=0; i < 10; i=i+1)
+                data[i] = 1;
+            printInt(calculateSD(data));
+        }
+        

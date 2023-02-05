@@ -1,0 +1,37 @@
+
+        int main()
+        {
+            float a, b, c, discriminant, root1, root2, realPart, imaginaryPart;
+            printf("Enter coefficients a, b and c: ");
+            discriminant = b*b-4*a*c;
+            // condition for real and different roots
+            if (discriminant > 0)
+            {
+            // sqrt() function returns square root
+                root1 = (-b+sqrt(discriminant))/(2*a);
+                root2 = (-b-sqrt(discriminant))/(2*a);
+                print(root1);
+            }
+            //condition for real and equal roots
+            else {
+                if (discriminant == 0)
+                {
+                    root1 = root2 = -b/(2*a);
+                    print(root1);
+                }
+                else
+                {
+                    realPart = -b/(2*a);
+                    imaginaryPart = sqrt(-discriminant)/(2*a);
+                }
+            }
+            return 0;
+        }  
+        void printf(string str){
+            return;
+        }
+        float sqrt(float num){
+            return num;
+        }
+        void print(float num){}
+        

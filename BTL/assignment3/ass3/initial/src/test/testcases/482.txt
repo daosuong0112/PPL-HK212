@@ -1,0 +1,17 @@
+
+        int a;
+        int main(){
+            int a;
+            if (true){
+                float a;
+                {{{{{
+                    if (true){
+                        int a;
+                        return a;
+                    }
+                }}}}}
+                
+            }
+
+        }
+        

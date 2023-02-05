@@ -1,0 +1,6 @@
+ Class Rectangle : Shape {
+                        getShape(a,b : Int; c,d : Float) {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x,y : Int = Shape::$numOfShape + x, a % b;
+                        }
+                    }

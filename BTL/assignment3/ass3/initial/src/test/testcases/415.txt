@@ -1,0 +1,9 @@
+
+        void main(){
+            int a;
+            if (getNum(a)){}
+        }
+        int getNum(int num){
+            return num;
+        }
+        

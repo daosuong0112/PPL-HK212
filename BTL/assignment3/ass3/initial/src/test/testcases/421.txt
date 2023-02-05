@@ -1,0 +1,9 @@
+
+        void main(){
+            string str;
+            do {} while(getStr(str));
+        }
+        string getStr(string str){
+            return str;
+        }
+        

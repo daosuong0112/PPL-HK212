@@ -1,0 +1,130 @@
+class StaticCheck(Visitor):
+
+    # class Program: #decl:List[VarDecl],stmts:List[Assign]
+    def visitProgram(self,ctx:Program,o):
+        o = {}
+        for decl in ctx.decl: self.visit(decl, o)
+        for stmt in ctx.stmts: self.visit(stmt, o)
+
+    def visitVarDecl(self,ctx:VarDecl,o):
+        o[ctx.name] = 0
+        
+    def visitAssign(self,ctx:Assign,o):
+        r = self.visit(ctx.rhs, o)
+        l = self.visit(ctx.lhs, o)
+        if l == 0 and r == 0:
+            raise TypeCannotBeInferred(ctx)
+        elif l == 0 and r != 0:
+            l = r
+            o[ctx.lhs.name] = r
+        elif l != 0 and r == 0:
+            r = l
+            o[ctx.rhs.name] = l
+        elif l != r:
+            raise TypeMismatchInStatement(ctx)
+        
+
+    def visitBinOp(self,ctx:BinOp,o):
+        t1 = self.visit(ctx.e1, o)
+        t2 = self.visit(ctx.e2, o)
+        if ctx.op in ["+","-","*","/"]: # suy ra t1, t2 la kieu int
+            if t1 == 0: # t1 duoc khai bao
+                o[ctx.e1.name] = 1 # gan t1 la int
+                t1 = 1
+            if t2 == 0:
+                o[ctx.e2.name] = 1
+                t2 = 1
+            if t1 != 1 or t2 != 1:
+                raise TypeMismatchInExpression(ctx)
+            return 1
+        if ctx.op in ["+.","-.","*.","/."]: # suy ra t1, t2 la kieu float
+            if t1 == 0: # t1 duoc khai bao
+                o[ctx.e1.name] = 2 # gan t1 la float
+                t1 = 2
+            if t2 == 0:
+                o[ctx.e2.name] = 2
+                t2 = 2
+            if t1 != 2 or t2 != 2:
+                raise TypeMismatchInExpression(ctx)
+            return 2
+        if ctx.op in [">","="]: # suy ra t1, t2 la kieu int
+            if t1 == 0: # t1 duoc khai bao
+                o[ctx.e1.name] = 1 # gan t1 la int
+                t1 = 1
+            if t2 == 0:
+                o[ctx.e2.name] = 1
+                t2 = 1
+            if t1 != 1 or t2 != 1:
+                raise TypeMismatchInExpression(ctx)
+            return 3
+        if ctx.op in [">.","=."]: # suy ra t1, t2 la kieu float
+            if t1 == 0: # t1 duoc khai bao
+                o[ctx.e1.name] = 2 # gan t1 la float
+                t1 = 2
+            if t2 == 0:
+                o[ctx.e2.name] = 2
+                t2 = 2
+            if t1 != 2 or t2 != 2:
+                raise TypeMismatchInExpression(ctx)
+            return 3
+        if ctx.op in ["&&", "||", ">b", "=b"]: # suy ra t1, t2 la kieu bool
+            if t1 == 0: # t1 duoc khai bao
+                o[ctx.e1.name] = 3 # gan t1 la bool
+                t1 = 3
+            if t2 == 0:
+                o[ctx.e2.name] = 3
+                t2 = 3
+            if t1 != 3 or t2 != 3:
+                raise TypeMismatchInExpression(ctx)
+            return 3
+        
+
+    def visitUnOp(self,ctx:UnOp,o):
+        t = self.visit(ctx.e, o)
+        if ctx.op == "-":
+            if t == 0:
+                o[ctx.e.name] = 1
+                t = 1
+            if t != 1:
+                raise TypeMismatchInExpression(ctx)
+            return 1
+        if ctx.op == "-.":
+            if t == 0:
+                o[ctx.e.name] = 2
+                t = 2
+            if t != 2:
+                raise TypeMismatchInExpression(ctx)
+            return 2
+        if ctx.op == "!":
+            if t == 0:
+                o[ctx.e.name] = 3
+                t = 3
+            if t != 3:
+                raise TypeMismatchInExpression(ctx)
+            return 3
+        if ctx.op == "i2f":
+            if t == 0:
+                o[ctx.e.name] = 1
+                t = 1
+            if t != 1:
+                raise TypeMismatchInExpression(ctx)
+            return 2
+        if ctx.op == "floor":
+            if t == 0:
+                o[ctx.e.name] = 2
+                t = 2
+            if t != 2:
+                raise TypeMismatchInExpression(ctx)
+            return 1
+
+    def visitIntLit(self,ctx:IntLit,o): return 1
+
+    def visitFloatLit(self,ctx,o): return 2
+
+    def visitBoolLit(self,ctx,o): return 3
+
+    def visitId(self,ctx,o):
+        if ctx.name not in o:
+            raise UndeclaredIdentifier(ctx.name)
+        return o[ctx.name]
+        

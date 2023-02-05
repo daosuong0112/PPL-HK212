@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(Program),[MethodDecl(Id(getArea),Instance,[],Block([AssignStmt(FieldAccess(Id(Shape),Id(getArea)),BinaryOp(%,BinaryOp(/,BinaryOp(*,ArrayCell(Id(arr),[Id(x)]),ArrayCell(Id(arr),[Id(u)])),ArrayCell(Id(arr),[Id(z)])),BinaryOp(-,ArrayCell(Id(arr),[Id(a)]),ArrayCell(Id(arr),[IntLit(1)]))))]))])])

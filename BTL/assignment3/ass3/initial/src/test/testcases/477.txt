@@ -1,0 +1,8 @@
+
+        void main(){
+            boolean a;
+            int b;
+            int c;
+            a = b = c;
+        }
+        

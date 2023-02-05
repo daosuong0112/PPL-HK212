@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(Program),[MethodDecl(Id(getArea),Instance,[],Block([For(Id(x),IntLit(5),IntLit(2),IntLit(1),Block([AssignStmt(ArrayCell(Id(arr),[Id(x)]),BinaryOp(*,Id(x),Id(x)))])])]))])])

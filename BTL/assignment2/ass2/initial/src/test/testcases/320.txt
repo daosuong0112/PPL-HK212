@@ -1,0 +1,10 @@
+ Class Shape {
+                        Val $numOfShape: Int = 0;
+                        Val immutableAttribute: Int = 0;
+                        Var length, width: Int;
+                        ##Var a : Int = 10;##
+                        $getNumOfShape() {
+                            Return $numOfShape;
+                            a = b::$shape(a[0],a[1],a[2][3]);
+                        }
+                    } 

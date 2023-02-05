@@ -1,0 +1,6 @@
+
+        void main(int a, boolean b){}
+        int main2(int a, string b, float a){
+            return a;
+        }
+        

@@ -1,0 +1,18 @@
+ 
+            Class Vehicle {
+                Shape() {
+                    Foreach(a::$b In 1+2 .. 100-1 By 2)
+                    {
+                        Foreach(arr[0] In 4/2 .. 100*2 By 4)
+                        {
+                            {
+                                a = 2;
+                                {
+                                    a = 3;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            

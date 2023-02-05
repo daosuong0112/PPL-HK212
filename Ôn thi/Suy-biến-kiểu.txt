@@ -1,0 +1,50 @@
+1. Lời gọi z(x) có nghĩ z có kiểu hàm, kiểu đầu vào của z là kiểu dữ liệu của x.
+2. Giả sử x có kiểu là T1, vậy z có kiểu đầu vào là T1.
+3. Lời gọi y(z(x)) có nghĩa y có kiểu hàm, kiểu đầu vào của y cũng là kiểu đầu ra của z.
+4. Giả sử kiểu đầu ra của z là T2, vậy kiểu đầu vào của y là T2.
+5. Từ (1), (2), (3) ta có kiểu của z là T1->T2.
+6. Kiểu trả về của hàm foo cũng chính là kiểu đầu ra của y.
+7. Giả sử y có kiểu đầu ra là T3, vậy kiểu trả về của hàm foo là T3.
+8. Từ (3), (4), (7) ta có kiểu của y là T2->T3.
+Kết luận biểu thức kiểu của hàm foo: (T1*(T2->T3)*(T1->T2))->T3
+
+
+
+
+1. Lời gọi y(x) có nghĩ y có kiểu hàm, kiểu đầu vào của y là kiểu dữ liệu của x.
+2. Biểu thức điều kiện của if phải có kiểu boolean, vậy kiểu đầu ra của y phải là boolean.
+3. Phép + chỉ dùng cho kiểu nguyên, ta có x + 1 vậy x có kiểu là integer. Vậy từ (1) kiểu đầu vào của y cũng là integer.
+4. Từ (1), (2), (3) ta có kiểu của y là integer -> boolean.
+5. Ta có giá trị của nhánh then và nhánh else trong câu lệnh đều phải có cùng kiểu, nhánh else có kiểu integer. Vậy nhánh then cũng có kiểu là integer. Nhánh then có lời gọi z(x) vậy z có kiểu hàm với đầu ra có kiểu integer, kiểu đầu vào của z cùng kiểu với x.
+6. Từ (3), (5) ta suy ra kiểu đầu vào của z là integer và kiểu của z là integer->integer.
+7. Kiểu trả về của hàm foo cũng chính là kiểu trả về của 2 nhánh then và else.
+8. Từ (5), (7) ta có kiểu trả về của hàm foo là integer.
+Kết luận biểu thức kiểu của hàm foo: (integer*(integer->boolean)*(integer->integer))->integer
+
+
+
+1. Lời gọi z(xy có nghĩ z có kiểu hàm, kiểu đầu vào của z là kiểu dữ liệu của y.
+2. Giả sử y có kiểu là T1, vậy z có kiểu đầu vào là T1.
+3. Lời gọi x(z(y)) có nghĩa x có kiểu hàm, kiểu đầu vào của x cũng là kiểu đầu ra của z.
+4. Giả sử kiểu đầu ra của z là T2, vậy kiểu đầu vào của x là T2.
+5. Từ (1), (2), (3) ta có kiểu của z là T1->T2.
+6. Kiểu trả về của hàm foo cũng chính là kiểu đầu ra của x.
+7. Giả sử x có kiểu đầu ra là T3, vậy kiểu trả về của hàm foo là T3.
+8. Từ (3), (4), (7) ta có kiểu của x là T2->T3.
+Kết luận biểu thức kiểu của hàm foo: ((T2->T3)*T1*(T1->T2))->T3
+
+
+
+1. Lời gọi x(y) có nghĩ x có kiểu hàm, kiểu đầu vào của y là kiểu dữ liệu của y.
+2. Biểu thức điều kiện của if phải có kiểu boolean, vậy kiểu đầu ra của x phải là boolean.
+3. Ta có giá trị của nhánh then và nhánh else trong câu lệnh đều phải có cùng kiểu. Nhánh then có giá trị 1 là kiểu integer. Vậy nhánh else cũng có kiểu là integer. Vậy lời gọi z(y) có z là kiểu hàm, z có kiểu đầu ra là integer, kiểu đầu vào là kiểu của y.
+4. Giả sử kiểu của y là T1.
+5. Từ (1),(2),(4) ta có kiểu của x là T1->boolean.
+6. Từ (3),(4) ta có kiểu của z là T1->integer.
+7. Kiểu trả về của hàm foo cũng chính là kiểu trả về của 2 nhánh then, else. Từ (3) ta có kiểu trả về của foo là integer.
+Kết luận biểu thức kiểu của hàm foo: ((T1->boolean)*T1*(T1->integer))->integer
+
+
+
+
+

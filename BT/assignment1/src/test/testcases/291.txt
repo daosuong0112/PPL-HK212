@@ -1,0 +1,5 @@
+ Class Program {
+                        getArea() {
+                            Val a,b : Float = 1.0, 1_234e10;
+                        }
+                    } 

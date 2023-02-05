@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(main),[AttributeDecl(Instance,VarDecl(Id(a),ArrayType(IntLit(3),ArrayType(IntLit(3),StringType)),[[StringLit(Volvo),StringLit(33),StringLit(18)],[StringLit(Saab),StringLit(5),StringLit(3)],[StringLit(Land Rover),StringLit(17),StringLit(15)]]))])])

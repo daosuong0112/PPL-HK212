@@ -1,0 +1,7 @@
+ Class main {
+                        getArea() {
+                            Shape::$getArea(a);
+                        }
+                    }
+                    Class Program {}
+                    Class Rectangle : Shape {}

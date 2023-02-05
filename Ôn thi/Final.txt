@@ -1,0 +1,41 @@
+1. 
+a.
+Truyền theo tên, vậy
+    - x = z
+    - y = foo() + z
+Trong bar, ta có:
+    - Biểu thức x==0, x là z, z đang có giá trị là 0
+    --> x == 0 là True, lệnh if sẽ thực thi vế đầu
+    --> hàm bar sẽ trả về giá trị là x, x đang có giá trị của z,
+z có giá trị là 0, vậy hàm bar trả về 0.
+--> Vậy, chương trình in ra màn hình 0.
+b.
+Truyền theo giá trị, vậy
+    - x nhận giá trị của z là 0
+    - y cần tính giá trị của foo() + z để truyền vào, hàm foo() 
+lại gọi đệ quy hàm foo().
+    - Hàm foo() là một hàm đệ quy vô tận do không có điểm kết thúc.
+    --> Chương trình bị đứng do đệ quy vô tận.
+c.
+Môi trường không cục bộ:
+    - x(int), y(int), bar(int,int->int) ở dòng 3.
+    - foo(->int) ở dòng 2.
+Môi trường cục bộ:
+    - z(double) ở dòng 4.
+
+5.
+a.
+$$ Lý thuyết chép hết slide ra.
+
+Trình cộng hành là việc 2 hay nhiều chương trình con thay phiên nhau
+chạy, khi chương trình này đang chạy sẽ chuyển tiếp sang chương trình
+kia chạy, nếu chương trình kia gọi lại chương trình này, nó sẽ tiếp 
+tục chạy từ sau vị trí để chuyển đổi lúc trước chứ không chạy lại từ
+đầu.
+Điểm khác biệt so với cơ chế gọi - trở về đơn giản là việc một chương
+trình con của trình cộng hành có nhiều điểm có thể đi vào chương trình.
+Trong khi đó, cơ chế gọi - trở về đơn giản chỉ có duy nhất 1 điểm vào
+là điểm bắt đầu của chương trình.
+Trình cộng hành có thể được ứng dụng để đọc 
+
+

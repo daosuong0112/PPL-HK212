@@ -1,0 +1,11 @@
+
+        void main(){
+            int a;
+            int b;
+        }
+        int add(int a, int b){
+            if (a > 100)
+                return 1;
+            return 1 * add(a, b);
+        }
+        

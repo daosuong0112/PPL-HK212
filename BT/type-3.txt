@@ -1,0 +1,112 @@
+class StaticCheck(Visitor):
+
+    def visitProgram(self,ctx:Program,o):
+        #decl:List[Decl],stmts:List[Stmt]
+        o={}
+        for i in ctx.decl:
+            if isinstance(i,VarDecl):
+                i.accept(self,o)
+            else:
+                if i.name in o.keys():
+                    raise Redeclared(i)
+                o[i.name]=5
+                o[i.name]=i.accept(self,[o])
+                
+        [i.accept(self,[o]) for i in ctx.stmts]
+
+    def visitVarDecl(self,ctx:VarDecl,o):
+        #name:str
+        if ctx.name not in o.keys():
+            o[ctx.name]=0
+            return ctx.name
+        else:
+            raise Redeclared(ctx)
+        
+    def visitFuncDecl(self,ctx:FuncDecl,o):
+        #name:str,param:List[VarDecl],local:List[Decl],stmts:List[Stmt]
+        #return param {2,3,1}
+        o1={}
+        o1["param"]={}
+        o1["local"]={}
+        for i in ctx.param:
+            i.accept(self,o1["param"])
+            
+        for i in ctx.local:
+            if isinstance(i,VarDecl):
+                checkRedecl=i.accept(self,o1["local"])
+                if checkRedecl in o1["param"]:
+                    raise Redeclared(i)
+            else:
+                if i.name in o1["local"].keys() and i.name in o1["param"].keys():
+                    raise Redeclared(i)
+                o1["local"][i.name]=5
+                o1["local"][i.name]=i.accept(self,[o1]+o)
+                
+        o2= [o1] + o
+        [i.accept(self,o2) for i in ctx.stmts]
+        return o1["param"]
+            
+        
+        
+        #stmts must know variable and param in its scope and its parent scopes
+
+    def visitCallStmt(self,ctx:CallStmt,o):
+        #name:str,args:List[Exp]
+        hey = Id(ctx.name)
+        hey=hey.accept(self,o)
+        if isinstance(hey[1],int):
+            raise UndeclaredIdentifier(ctx.name)
+        if len(ctx.args)!= len(hey[1].keys()):
+            raise TypeMismatchInStatement(ctx)
+        count=0
+        for i in ctx.args:
+            if i.accept(self,o)[1]==0 and hey[1][list(hey[1].keys())[count]]==0:
+                raise TypeCannotBeInferred(ctx)
+            elif i.accept(self,o)[1]!=0 and hey[1][list(hey[1].keys())[count]]==0:
+                hey[1][list(hey[1].keys())[count]]=i.accept(self,o)[1]
+            elif i.accept(self,o)[1]==0 and hey[1][list(hey[1].keys())[count]]!=0:
+                i.accept(self,o)[0][i.name]=hey[1][list(hey[1].keys())[count]]
+            elif i.accept(self,o)[1]!= hey[1][list(hey[1].keys())[count]]:
+                raise TypeMismatchInStatement(ctx)
+            count=count+1
+        
+
+    def visitAssign(self,ctx:Assign,o):
+        #lhs:Id,rhs:Exp
+        rhs= ctx.rhs.accept(self,o)
+        lhs= ctx.lhs.accept(self,o)
+        if not isinstance(lhs[1],int) or lhs[1]==5:
+            raise UndeclaredIdentifier(lhs.name)
+        if not isinstance(rhs[1],int) or rhs[1]==5:
+            raise UndeclaredIdentifier(rhs.name)
+            
+        
+        if rhs[1] == 0 and lhs[1]==0:
+            raise TypeCannotBeInferred(ctx)
+        if rhs[1]!=0 and lhs[1]==0:
+            lhs[0][ctx.lhs.name]=rhs[1]
+            return
+        if rhs[1]==0 and lhs[1]!=0:
+            rhs[0][ctx.rhs.name]=lhs[1]
+            return
+        if rhs[1]!=lhs[1]:
+            raise TypeMismatchInStatement(ctx)
+
+    def visitIntLit(self,ctx:IntLit,o):
+        return ({},1)
+    def visitFloatLit(self,ctx,o):
+        return ({},2)
+    def visitBoolLit(self,ctx,o):
+        return ({},3)
+
+    def visitId(self,ctx,o):
+        for i in o:
+            if "param" in i.keys():
+                if ctx.name in i["param"].keys():
+                    return (i["param"],i["param"][ctx.name])
+                if ctx.name in i["local"].keys():
+                    return (i["local"],i["local"][ctx.name])
+            elif ctx.name in i.keys():
+                return (i,i[ctx.name])
+        raise UndeclaredIdentifier(ctx.name)
+        

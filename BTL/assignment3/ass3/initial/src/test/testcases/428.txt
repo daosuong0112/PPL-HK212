@@ -1,0 +1,7 @@
+
+        void main(){
+            int i;
+            string a[25];
+            for (i = 1; a; i = i + 1){}
+        }
+        

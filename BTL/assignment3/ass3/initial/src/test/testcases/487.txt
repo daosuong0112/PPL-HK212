@@ -1,0 +1,18 @@
+
+        int a,b,c;
+        void main(){
+            boolean d,e,f;
+            a = b = c = (10+3)/4 + 5*9 - 2;
+            d = e = f = true;
+            int i;
+            int arr[10];
+            for (i = 0; i < 10; i=i+1){
+                if (arr[i] > 10)
+                    break;
+                else{
+                    d = e = f = false;
+                }
+            }
+            return true;
+        }   
+        

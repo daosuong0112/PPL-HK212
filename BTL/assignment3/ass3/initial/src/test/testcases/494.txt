@@ -1,0 +1,26 @@
+
+        int main()
+        {
+            int n1, n2, rlt;
+            printf("Enter two positive integers: ");
+            rlt = hcf(n1,n2);
+            print(rlt);
+            return 0;
+        }
+        int hcf(int n1, int n2)
+        {
+            if (n2 != 0)
+                return hcf(n2, n1%n2);
+            else 
+                return n1;
+        }
+        void print(int rlt){
+            return;
+        }
+        void printf(string rlt){
+            return;
+        }
+        void println(string rlt){
+            return;
+        }
+        

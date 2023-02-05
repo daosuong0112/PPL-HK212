@@ -1,0 +1,6 @@
+
+        void main(){
+            int a;
+            do {} while(putInt(a));
+        }
+        

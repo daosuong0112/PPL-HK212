@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x, y, z, k : Boolean = a >= b, c < d, e != f, m == n;
+                        }
+                    }

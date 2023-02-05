@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(Program),[MethodDecl(Id(getArea),Instance,[],Block([AssignStmt(ArrayCell(Id(arr),[Id(z)]),CallExpr(Id(Shape),Id(getArea),[]))]))])])

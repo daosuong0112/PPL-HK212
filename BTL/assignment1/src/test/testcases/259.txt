@@ -1,0 +1,19 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : Float = $sum;
+                            Val y : A = Null;
+                        }
+                        getHeight(a : Int; b : Array[Int, 3]) {
+                            a = New A();
+                            b = Null;
+                        }
+                        getWidth(a :  Float; B : A) {
+                            If (a == b) {
+                                Return a;
+                                Foreach (i In 1 .. 100 By 2) {
+                                    Out.printInt(i);
+                                }
+                            }
+                        }
+                    }

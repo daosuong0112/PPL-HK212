@@ -1,0 +1,16 @@
+ Class Program {
+                        getArea() {
+                            Foreach (x In 5 .. 2) {
+                                Out.printInt(arr[x] + arr[3]);
+                                If (arr[d] == b) {
+                                    Return a;
+                                }
+                                Elseif (arr[c] > b) {
+                                    Break;
+                                }
+                                Elseif(a < b) {
+                                    Continue;
+                                }
+                            }
+                        }
+                    } 

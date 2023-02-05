@@ -1,0 +1,9 @@
+
+        void main(){
+            int a;
+            do {} while(getFloatingPoint(a));
+        }
+        float getFloatingPoint(int a){
+            return a * 1.0;
+        }
+        

@@ -1,0 +1,52 @@
+1. int foo(VD x, boolean y[], float m)
+--> type: (LVD;[ZF)I
+----------------------------------
+2. 
+	a -> 2 : int
+	b -> 3 : int[]
+	b[3] = a;
+--> 	aload_3
+	iconst_3
+	iload_2
+	iastore
+3.
+	a -> 2 : int[]
+	b -> 3 : int
+	b = a[2]
+--> 	aload_2
+	iconst_2
+	iaload
+	istore_3
+4. 	
+	a -> 2 : int
+	b -> 3 : int[]
+	a = b[a] + 4
+--> 	
+	aload_3
+	iload_2
+	iaload
+	iconst 4
+	iadd
+	istore_2
+5. 
+	a -> 2 : int
+	b -> 3 : int[]
+	b[a+1] = a*2 + 7
+--> 	aload_3
+	iload_2
+	iconst_1
+	iadd
+	iload_2
+	iconst_2
+	imul
+	bipush 7
+	iadd
+	iastore
+6. 	new A(2,3) -> Trả về đỉnh stack địa chỉ của đối tượng
+--> 	1. Tạo ra đối tượng A
+		new A
+	2. Gọi constructor cho đối tượng A (2,3)
+		dup -> gấp đôi giá trị lên đỉnh stack (cụ thể là đối tượng A)
+		iconst_2
+		iconst_3
+		invokespecial A/init(II) V

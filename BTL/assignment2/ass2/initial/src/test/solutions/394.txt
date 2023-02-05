@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(Program),[MethodDecl(Id(getArea),Instance,[],Block([AttributeDecl(Instance,ConstDecl(Id(a),IntType,BinaryOp(-,BinaryOp(+,IntLit(2),IntLit(5)),IntLit(9)))),AttributeDecl(Instance,ConstDecl(Id(b),IntType,BinaryOp(+,IntLit(3),BinaryOp(*,IntLit(2),IntLit(0)))))]))])])

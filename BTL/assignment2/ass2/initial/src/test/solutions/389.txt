@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(Program),[MethodDecl(Id(getArea),Instance,[],Block([AttributeDecl(Instance,ConstDecl(Id(a),ClassType(Id(A)),NewExpr(Id(A),[Id(a),Id(b)]))),AttributeDecl(Instance,ConstDecl(Id(b),ClassType(Id(A)),NewExpr(Id(A),[Id(a),Id(c)])))]))])])

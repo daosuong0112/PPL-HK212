@@ -1,0 +1,23 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : Float = $sum;
+                            Val y : A = Null;
+                        }
+                        getHeight(a : Int; b : Array[Int, 3]) {
+                            a = New A(a,b);
+                            b = Null;
+                        }
+                        getWidth(a :  Float; B : A) {
+                            If (a == b) {
+                                Return a;
+                            }
+                            Elseif (a > b) {
+                                Break;
+                            }
+                            Elseif(a < b) {
+                                Continue;
+                            }
+                            Else {}
+                        }
+                    }

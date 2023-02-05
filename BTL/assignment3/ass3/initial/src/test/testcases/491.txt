@@ -1,0 +1,7 @@
+
+        void main(){
+            int a[5];
+            float b;
+            a["1.2"] = b;
+        }   
+        

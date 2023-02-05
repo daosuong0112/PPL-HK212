@@ -1,0 +1,7 @@
+
+        void main1(){}
+        void main2(){}
+        int main3(){return 1;}
+        int main(){return 0;}
+        boolean main1(){return true;}
+        

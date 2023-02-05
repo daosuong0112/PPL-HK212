@@ -1,0 +1,9 @@
+
+        void main(){
+            boolean a[10];
+            a = print("abc");
+        }
+        void print(string str){
+            return;
+        }
+        

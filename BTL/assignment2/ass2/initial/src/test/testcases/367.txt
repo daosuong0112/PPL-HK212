@@ -1,0 +1,15 @@
+ Class main {
+                        getArea() {
+                            Shape::$getArea(a);
+                        }
+                    }
+                    Class Program {
+                        getArea() {
+                            Shape.getArea(a);
+                        }
+                    }
+                    Class Rectangle : Shape {
+                        getArea() {
+                           Shape::$getArea(1_234.5);
+                        }
+                    }

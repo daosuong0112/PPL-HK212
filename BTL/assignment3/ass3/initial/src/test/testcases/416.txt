@@ -1,0 +1,11 @@
+
+        void main(){
+            string a;
+            a = "Hello";
+            if (getString(a)){}
+            else {}
+        }
+        string getString(string a){
+            return a;
+        }
+        

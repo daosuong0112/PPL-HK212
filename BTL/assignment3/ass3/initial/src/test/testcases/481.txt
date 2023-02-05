@@ -1,0 +1,10 @@
+
+        int a;
+        int main(){
+            float a;
+            {{{{{{{{{{
+                boolean a;
+            }}}}}}}}}}
+            return a;
+        }
+        

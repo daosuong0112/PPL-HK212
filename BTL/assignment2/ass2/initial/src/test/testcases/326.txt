@@ -1,0 +1,11 @@
+ Class main{
+                        Var a: Array[Int, 5] = Array (
+                            Array("Volvo", "32", "18"),
+                            Array("Saab", "5", "2"),
+                            Array("Land Rover", "17", "15")
+                        ) ;
+                        getLength() {
+                            length = 10;
+                        }
+                    }
+                    

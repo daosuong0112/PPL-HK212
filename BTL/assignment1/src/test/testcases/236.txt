@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x,y,z : Boolean = a || b, a && b, !c;
+                        }
+                    }

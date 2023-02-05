@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x,y,z : Float = -a, --b, ---c;
+                        }
+                    }

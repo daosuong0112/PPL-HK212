@@ -1,0 +1,19 @@
+
+                int func(int a, float b, string c) {
+                    return 1;
+                }
+               void main(){
+                    float a, b, c, x, y, z;
+                    a = 9;
+                    b = 12;
+                    c = 3;
+                    x = a - b / 3 + c * 2 - 1;
+                    y = a - b / (3 + c) * (2 - 1);
+                    z = a - ( b / (3 + c) * 2) - 1;
+                    putFloat(x);
+                    putFloat(y);
+                    putFloat(z);
+                    func(2, 2, 2.3);
+                    return;
+                }
+                

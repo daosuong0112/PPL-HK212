@@ -1,0 +1,7 @@
+
+        void main(){
+            int i;
+            float f;
+            i = f * f + f; 
+        }
+        

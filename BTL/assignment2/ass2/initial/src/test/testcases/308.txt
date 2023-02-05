@@ -1,0 +1,6 @@
+ Class main{
+                        Var a,b,c : Float = 5.0,6.0,7.1;
+                        Var b : String = "abc";
+                        Var c : Int = 5;
+                        Var d : Boolean = True;
+                    } 

@@ -1,0 +1,20 @@
+
+        int a;
+        float b;
+        void main(){
+            boolean a;
+            a = true;
+            {
+                string a;
+                a = "Hello";
+                {
+                    string b;
+                    b = "Bye";
+                }
+            }
+            {
+                int c;
+            }
+            b = b + c;
+        }
+        

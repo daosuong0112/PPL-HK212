@@ -1,0 +1,14 @@
+
+        void main(){
+            float a[25];
+            if (div(a)){}
+            else{}
+        }
+        float[] div(float a[]){
+            int i;
+            for (i = 0; i < 5; i = i+1){
+                a[i] = 1;
+            }
+            return a;
+        }
+        

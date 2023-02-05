@@ -1,0 +1,13 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : Float = $sum;
+                            Val y : A = Null;
+                        }
+                        getHeight(a : Int; b : Array[Int, 3]) {
+                            a = Null;
+                        }
+                        getWidth(a : Float; B : A) {
+                            a = arr[3][4][6];
+                        }
+                    }

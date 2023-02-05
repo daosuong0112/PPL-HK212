@@ -1,0 +1,37 @@
+ Class Program {
+                        getArea() {
+                            If (a == b) {
+                                Return a;
+                            }
+                            Elseif (a > b) {
+                                Break;
+                                If (a == b) {
+                                    Return a;
+                                }
+                                Elseif (a > b) {
+                                    Break;
+                                }
+                                Elseif(a < b) {
+                                    Continue;
+                                }
+                                Else {
+                                    Val a : Int = 0;
+                                }
+                            }
+                            Else {
+                                Val a : Int = 0;
+                                If (a == b) {
+                                    Return a;
+                                }
+                                Elseif (a > b) {
+                                    Break;
+                                }
+                                Elseif(a < b) {
+                                    Continue;
+                                }
+                                Else {
+                                    Val a : Int = 0;
+                                }
+                            }
+                        }
+                    } 

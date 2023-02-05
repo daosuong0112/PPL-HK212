@@ -1,0 +1,19 @@
+
+        int main()
+        {
+            int n, reversedNumber, remainder;
+            reversedNumber = 0;
+            printf("Enter an integer: ");
+            do
+            {
+                remainder = n%10;
+                reversedNumber = reversedNumber*10 + remainder;
+                n = n / 10;
+            }while(n != 0);
+            printf(reversedNumber);
+            return 0;
+        }
+        void printf(string str){
+            return;
+        }
+        

@@ -1,0 +1,11 @@
+Class Rectangle {
+                    Val a : String = "mewmew";
+                    Var b : Float = 1e-3;
+                    
+                    Shape(){
+                        If (3 > 2){
+                            a = 5;
+                        }
+                    }
+        }          
+                   

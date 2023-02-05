@@ -1,0 +1,6 @@
+ Class Program {
+                        getArea() {
+                            Val a,b,c : Int = 0b1001, 0x123, 012;
+                            a = b;
+                        }
+                    } 

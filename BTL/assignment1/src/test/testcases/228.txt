@@ -1,0 +1,37 @@
+ Class main{
+                        Var a: Array[Array[String,3], 3] = Array (
+                            Array("Volvo", "22", "18"),
+                            Array("Saab", "5", "2"),
+                            Array("Land Rover", "17", "15")
+                        ) ;
+                        getLength() {
+                            Var r, s: Int;
+                            r = 2.0;
+                            Var a, b: Array[Int, 5];
+                            s = r * r * Self.myPI;
+                            a[0] = s;
+                            If (a == b) {
+                                a = New X();
+                            }
+                            Elseif (a != b) {
+                                b = Null;
+                            }
+                            Elseif (a == 0) {
+                                a = b + Shape::$numOfShape();
+                            }
+                            Else {
+                                Foreach (x In 5 .. 2 By 8) {
+                                    If (a ==. b) {
+                                        Foreach (x In 5 .. 2 By 2) {
+                                            Out.printInt(arr[x]);
+                                            Return arr[5];
+                                        }
+                                    }
+                                    Foreach (x In 5 .. 2 By 2) {
+                                        Out.printInt(arr[x]);
+                                    }
+                                }
+                                b = a - Shape.getArea() - Shape.width - Shape::$height;
+                            }
+                        }
+                    } 

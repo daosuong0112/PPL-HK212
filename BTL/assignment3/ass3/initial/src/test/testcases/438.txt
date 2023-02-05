@@ -1,0 +1,9 @@
+
+        void main(){
+            int arr[10];
+            if (arr[5] >= 1)
+                return;
+            else
+                return arr;
+        }
+        

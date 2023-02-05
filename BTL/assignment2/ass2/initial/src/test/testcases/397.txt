@@ -1,0 +1,6 @@
+ Class Program {
+                        getArea() {
+                            a = "" +. "abc";
+                            b = 0;
+                        }
+                    } 

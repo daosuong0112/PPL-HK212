@@ -1,0 +1,3 @@
+ Class main{
+                        Var a: Array[String, 3] = Array("Volvo", "33", "18");
+                    } 

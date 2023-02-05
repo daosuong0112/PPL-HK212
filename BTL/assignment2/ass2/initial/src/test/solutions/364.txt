@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(main),[]),ClassDecl(Id(Program),[]),ClassDecl(Id(Rectangle),Id(Shape),[])])

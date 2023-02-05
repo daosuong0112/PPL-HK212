@@ -1,0 +1,14 @@
+ Class main{
+                        Var a: Array[Array[String,3], 3] = Array (
+                            Array("Volvo", "33", "18"),
+                            Array("Saab", "5", "3"),
+                            Array("Land Rover", "17", "15")
+                        ) ;
+                        getLength(a : Int) {
+                            Var r, s: Int;
+                            r = 3.0;
+                            Var a, b: Array[Int, 5];
+                            s = r * r * Self.myPI;
+                            a[0] = s;
+                        }
+                    } 

@@ -1,0 +1,6 @@
+ Class Program {
+                        main() {
+                            Out.printInt(Shape::$numOfShape);
+                            Val x : A = New A(a,a.b,a::$b,a[0][x]);
+                        }
+                    }

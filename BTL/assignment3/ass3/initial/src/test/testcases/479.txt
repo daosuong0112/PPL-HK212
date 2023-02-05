@@ -1,0 +1,14 @@
+
+        int a;
+        float b;
+        boolean main(){
+            {
+                boolean a;
+            }
+            {
+                boolean b;
+            }
+            if (true)
+                return a;
+        }
+        

@@ -1,0 +1,6 @@
+
+        void main(){
+            int i;
+            for (i = 1; i + getFloat(); i = i + 1){}
+        }
+        

@@ -1,0 +1,511 @@
+# from array import ArrayType
+# from ast import Assign, Break, Continue, For, If, Return
+# from msilib.schema import Binary
+from D96Visitor import D96Visitor
+from D96Parser import D96Parser
+from AST import *
+# from main.d96.utils.AST import AttributeDecl, BoolType, ClassDecl, ClassType, ConstDecl, FloatType, Id, Instance, IntLiteral, IntType, MethodDecl, NewExpr, Static, StringType
+# from main.d96.utils.AST import ArrayCell, ArrayLiteral, BinaryOp, Block, BooleanLiteral, CallExpr, CallStmt, FieldAccess, FloatLiteral, NullLiteral, SelfLiteral, StringLiteral, UnaryOp, VarDecl
+
+class ASTGeneration(D96Visitor):
+    className = ""
+
+    def strToInt(self, intLit):
+        if "x" in intLit or "X" in intLit:
+            if "X" in intLit:
+                intLit = intLit.replace("X", "x")
+            return [IntLiteral(hex(int(intLit, 16)))]
+        elif "b" in intLit or "B" in intLit:
+            if intLit[1] == 'B':
+                intLit = intLit.replace("B", "b")
+            if intLit[1] == 'b':
+                return [IntLiteral(bin(int(intLit, 2)))]
+        elif intLit == '0' or intLit[0] != '0':
+            return [IntLiteral(int(intLit))]
+        return [IntLiteral(oct(int(intLit, 8)))]
+
+    # program: classdecls EOF;
+    def visitProgram(self, ctx: D96Parser.ProgramContext):
+        return Program(self.visit(ctx.classdecls()))
+    
+    # classdecls: classdecl classdecls | classdecl;
+    def visitClassdecls(self, ctx: D96Parser.ClassdeclsContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.classdecl())
+        return self.visit(ctx.classdecl()) + self.visit(ctx.classdecls())
+
+    # classdecl: CLASS ID (superclass | ) LP (memberlist | ) RP;
+    def visitClassdecl(self, ctx: D96Parser.ClassdeclContext):
+        self.className = ctx.ID().getText()
+        if ctx.superclass():
+            if ctx.memberlist():
+                return [ClassDecl(Id(ctx.ID().getText()), self.visit(ctx.memberlist()), self.visit(ctx.superclass()))]
+            else:
+                return [ClassDecl(Id(ctx.ID().getText()), [], self.visit(ctx.superclass()))]
+        else:
+            if ctx.memberlist():
+                return [ClassDecl(Id(ctx.ID().getText()), self.visit(ctx.memberlist()))]
+            else:
+                return [ClassDecl(Id(ctx.ID().getText()), [])]
+
+    # superclass: COLON ID;
+    def visitSuperclass(self, ctx: D96Parser.SuperclassContext):
+        return Id(ctx.ID().getText())
+
+    # memberlist: member memberlist | member;
+    def visitMemberlist(self, ctx: D96Parser.MemberlistContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.member())
+        return self.visit(ctx.member()) + self.visit(ctx.memberlist())
+
+    # member: attr | method;
+    def visitMember(self, ctx: D96Parser.MemberContext):
+        if ctx.attr():
+            return self.visit(ctx.attr())
+        return self.visit(ctx.method())
+
+    # attr: attrtype idlist COLON typ (EQUAL exprlist | ) SEMI;
+    def visitAttr(self, ctx: D96Parser.AttrContext):
+        # id = self.visit(ctx.idlist())
+        # attrlist = []
+        if ctx.EQUAL():
+            return list(map(lambda x,y: AttributeDecl(Static() if "$" in str(x) else Instance(), ConstDecl(x, self.visit(ctx.typ()), y) if self.visit(ctx.attrtype()) == "Val" else VarDecl(x, self.visit(ctx.typ()), y)), self.visit(ctx.idlist()), self.visit(ctx.exprlist())))
+        return list(map(lambda x: AttributeDecl(Static() if "$" in str(x) else Instance(), ConstDecl(x, self.visit(ctx.typ())) if self.visit(ctx.attrtype()) == "Val" else VarDecl(x, self.visit(ctx.typ()))), self.visit(ctx.idlist())))
+        # if ctx.EQUAL():
+        #     explist = self.visit(ctx.exprlist())
+        #     for x in range(len(id)):
+        #         if "$" in str(id[x]):
+        #             attrlist += [AttributeDecl(Static(), ConstDecl(id[x], self.visit(ctx.typ()), explist[x]) if self.visit(ctx.attrtype()) == "Val" else VarDecl(id[x], self.visit(ctx.typ()), explist[x]))]
+        #         else:
+        #             attrlist += [AttributeDecl(Instance(), ConstDecl(id[x], self.visit(ctx.typ()), explist[x]) if self.visit(ctx.attrtype()) == "Val" else VarDecl(id[x], self.visit(ctx.typ()), explist[x]))]
+        # else:
+        #     for x in range(len(id)):
+        #         if "$" in str(id[x]):
+        #             attrlist += [AttributeDecl(Static(), ConstDecl(id[x], self.visit(ctx.typ())) if self.visit(ctx.attrtype()) == "Val" else VarDecl(id[x], self.visit(ctx.typ())))]
+        #         else:
+        #             attrlist += [AttributeDecl(Instance(), ConstDecl(id[x], self.visit(ctx.typ())) if self.visit(ctx.attrtype()) == "Val" else VarDecl(id[x], self.visit(ctx.typ())))]
+        # return attrlist
+            
+    # attrtype: VAL | VAR;
+    def visitAttrtype(self, ctx: D96Parser.AttrtypeContext):
+        return ctx.VAL().getText() if ctx.VAL() else ctx.VAR().getText()
+
+    # idlist: (STATIC | ID) COMMA idlist | (STATIC | ID);
+    def visitIdlist(self, ctx: D96Parser.IdlistContext):
+        if ctx.getChildCount() == 1:
+            return [Id(ctx.STATIC().getText()) if ctx.STATIC() else Id(ctx.ID().getText())]
+        else:
+            return [Id(ctx.STATIC().getText()) if ctx.STATIC() else Id(ctx.ID().getText())] + self.visit(ctx.idlist())
+
+    # typ: BOOLEAN | INTTYPE | FLOATTYPE | STRING | arrdecl | ID;
+    def visitTyp(self, ctx: D96Parser.TypContext):
+        if ctx.BOOLEAN():
+            return BoolType()
+        elif ctx.INTTYPE():
+            return IntType()
+        elif ctx.FLOATTYPE():
+            return FloatType()
+        elif ctx.STRING():
+            return StringType()
+        elif ctx.ID():
+            return ClassType(Id(ctx.ID().getText()))
+        else:
+            return self.visit(ctx.arrdecl())
+
+    # exprlist: expr COMMA exprlist | expr;
+    def visitExprlist(self, ctx: D96Parser.ExprlistContext):
+        if ctx.COMMA():
+            return self.visit(ctx.expr()) + self.visit(ctx.exprlist())
+        return self.visit(ctx.expr())
+
+    # expr: exp1 (CONCAT | COMPARSTR) exp1 | exp1;
+    def visitExpr(self, ctx: D96Parser.ExprContext):
+        if ctx.CONCAT():
+            return [BinaryOp(ctx.CONCAT().getText(), self.visit(ctx.exp1(0))[0], self.visit(ctx.exp1(1))[0])]
+        elif ctx.COMPARSTR():
+            return [BinaryOp(ctx.COMPARSTR().getText(), self.visit(ctx.exp1(0))[0], self.visit(ctx.exp1(1))[0])]
+        return self.visit(ctx.exp1(0))
+
+    # exp1: exp2 (COMPAR | NOTEQUAL | NOTSMALLER | NOTLARGER | LARGER | SMALLER) exp2 | exp2;
+    def visitExp1(self, ctx: D96Parser.Exp1Context):
+        if ctx.COMPAR():
+            return [BinaryOp(ctx.COMPAR().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        elif ctx.NOTEQUAL():
+            return [BinaryOp(ctx.NOTEQUAL().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        elif ctx.NOTSMALLER():
+            return [BinaryOp(ctx.NOTSMALLER().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        elif ctx.NOTLARGER():
+            return [BinaryOp(ctx.NOTLARGER().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        elif ctx.LARGER():
+            return [BinaryOp(ctx.LARGER().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        elif ctx.SMALLER():
+            return [BinaryOp(ctx.SMALLER().getText(), self.visit(ctx.exp2(0))[0], self.visit(ctx.exp2(1))[0])]
+        return self.visit(ctx.exp2(0))
+
+    # exp2: exp2 (AND | OR) exp3 | exp3;
+    def visitExp2(self, ctx: D96Parser.Exp2Context):
+        if ctx.AND():
+            return [BinaryOp(ctx.AND().getText(), self.visit(ctx.exp2())[0], self.visit(ctx.exp3())[0])]
+        elif ctx.OR():
+            return [BinaryOp(ctx.OR().getText(), self.visit(ctx.exp2())[0], self.visit(ctx.exp3())[0])]
+        return self.visit(ctx.exp3())
+
+    # exp3: exp3 (ADD | MINUS) exp4 | exp4;
+    def visitExp3(self, ctx: D96Parser.Exp3Context):
+        if ctx.ADD():
+            return [BinaryOp(ctx.ADD().getText(), self.visit(ctx.exp3())[0], self.visit(ctx.exp4())[0])]
+        elif ctx.MINUS():
+            return [BinaryOp(ctx.MINUS().getText(), self.visit(ctx.exp3())[0], self.visit(ctx.exp4())[0])]
+        return self.visit(ctx.exp4())
+
+    # exp4: exp4 (MULTI | DIV | PERCENT) exp5 | exp5;
+    def visitExp4(self, ctx: D96Parser.Exp4Context):
+        if ctx.MULTI():
+            return [BinaryOp(ctx.MULTI().getText(), self.visit(ctx.exp4())[0], self.visit(ctx.exp5())[0])]
+        elif ctx.DIV():
+            return [BinaryOp(ctx.DIV().getText(), self.visit(ctx.exp4())[0], self.visit(ctx.exp5())[0])]
+        elif ctx.PERCENT():
+            return [BinaryOp(ctx.PERCENT().getText(), self.visit(ctx.exp4())[0], self.visit(ctx.exp5())[0])]
+        return self.visit(ctx.exp5())
+
+    # exp5: NOT exp5 | exp6;
+    def visitExp5(self, ctx: D96Parser.Exp5Context):
+        if ctx.NOT():
+            return [UnaryOp(ctx.NOT().getText(), self.visit(ctx.exp5())[0])]
+        return self.visit(ctx.exp6())
+
+    # exp6: MINUS exp6 | exp7;
+    def visitExp6(self, ctx: D96Parser.Exp6Context):
+        if ctx.MINUS():
+            return [UnaryOp(ctx.MINUS().getText(), self.visit(ctx.exp6())[0])]
+        return self.visit(ctx.exp7())
+
+    # exp7: eleexp | exp8;
+    def visitExp7(self, ctx: D96Parser.Exp7Context):
+        if ctx.exp8():
+            return self.visit(ctx.exp8())
+        return self.visit(ctx.eleexp())
+        
+
+    # exp8: exp8 INSTANT exp9 | exp9;
+    def visitExp8(self, ctx: D96Parser.Exp8Context):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.exp9())
+        return [FieldAccess(self.visit(ctx.exp8())[0], self.visit(ctx.exp9())[0])]
+
+    # -------------------QUAN TRONG------------------------------
+    # exp9: exp9 STATICATTR exp9 | exp10;   // CO THE LA exp9: exp10 STATICATTR exp10 | exp10;
+    def visitExp9(self, ctx: D96Parser.Exp9Context):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.exp10())
+        return [FieldAccess(self.visit(ctx.exp9(0))[0], self.visit(ctx.exp9(1))[0])]
+
+    # exp10: objcreate | exp11;
+    def visitExp10(self, ctx: D96Parser.Exp10Context):
+        if ctx.exp11():
+            return self.visit(ctx.exp11())
+        return self.visit(ctx.objcreate())
+
+    # exp11: LB expr RB | NULL | INT | FLOAT | TRUE | FALSE | STR | ID | STATIC | multiarr | indexedarr | SELF 
+    #     | imethodi | smethodi | instance | staatr;
+    def visitExp11(self, ctx: D96Parser.Exp11Context):
+        if ctx.LB():
+            return self.visit(ctx.expr())
+        elif ctx.NULL():
+            return [NullLiteral()]
+        elif ctx.INT():
+            return self.strToInt(ctx.INT().getText())
+        elif ctx.FLOAT():
+            return [FloatLiteral(float(ctx.FLOAT().getText()))]
+        elif ctx.TRUE():
+            return [BooleanLiteral(True)]
+        elif ctx.FALSE():
+            return [BooleanLiteral(False)]
+        elif ctx.STR():
+            return [StringLiteral(ctx.STR().getText())]
+        elif ctx.ID():
+            return [Id(ctx.ID().getText())]
+        elif ctx.STATIC():
+            return [Id(ctx.STATIC().getText())]
+        elif ctx.SELF():
+            return [SelfLiteral()]
+        elif ctx.multiarr():
+            return self.visit(ctx.multiarr())
+        elif ctx.indexedarr():
+            return self.visit(ctx.indexedarr())
+        elif ctx.imethodi():
+            return [CallExpr(self.visit(ctx.imethodi().ins()), Id(ctx.imethodi().ID().getText()), self.visit(ctx.imethodi().exprlist()) if ctx.imethodi().exprlist() else [])]
+        elif ctx.smethodi():
+            return [CallExpr(Id(ctx.smethodi().ID().getText()), Id(ctx.smethodi().STATIC().getText()), self.visit(ctx.smethodi().exprlist()) if ctx.smethodi().exprlist() else [])]
+        elif ctx.instance():
+            return self.visit(ctx.instance())
+        elif ctx.staatr():
+            return self.visit(ctx.staatr())
+            
+
+    # call: ID LB (exprlist | ) RB;
+    # def visitCall(self, ctx: D96Parser.CallContext):
+    #     return None
+
+    # ------------------QUAN TRONG--------------- KHÔNG THỂ RỖNG PARAMLIST VÌ BÊN AST.PY KHÔNG CHO RỖNG
+    # method: (CONSTRUCTOR | DESTRUCTOR | STATIC | ID) LB (paramlist | ) RB blockstate;
+    def visitMethod(self, ctx: D96Parser.MethodContext):
+        if ctx.CONSTRUCTOR():
+            if ctx.paramlist():
+                return [MethodDecl(Instance(), Id("Constructor"), self.visit(ctx.paramlist()), self.visit(ctx.blockstate()))]
+            return [MethodDecl(Instance(), Id("Constructor"), [], self.visit(ctx.blockstate()))]
+        elif ctx.DESTRUCTOR():
+            if ctx.paramlist():
+                return [MethodDecl(Instance(), Id("Destructor"), self.visit(ctx.paramlist()), self.visit(ctx.blockstate()))]
+            return [MethodDecl(Instance(), Id("Destructor"), [], self.visit(ctx.blockstate()))]
+        elif ctx.ID():
+            if ctx.paramlist():
+                return [MethodDecl(Instance(), Id(ctx.ID().getText()), self.visit(ctx.paramlist()), self.visit(ctx.blockstate()))]
+            elif self.className == "Program" and ctx.ID().getText() == "main":
+                return [MethodDecl(Static(), Id(ctx.ID().getText()), [], self.visit(ctx.blockstate()))]
+            return [MethodDecl(Instance(), Id(ctx.ID().getText()), [], self.visit(ctx.blockstate()))]
+        else:
+            if ctx.paramlist():
+                return [MethodDecl(Static(), Id(ctx.STATIC().getText()), self.visit(ctx.paramlist()), self.visit(ctx.blockstate()))]
+            return [MethodDecl(Static(), Id(ctx.STATIC().getText()), [], self.visit(ctx.blockstate()))]
+
+    # paramlist: param SEMI paramlist | param;
+    def visitParamlist(self, ctx: D96Parser.ParamlistContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.param())
+        return self.visit(ctx.param()) + self.visit(ctx.paramlist())
+
+    # param: idlist COLON typ;
+    def visitParam(self, ctx: D96Parser.ParamContext):
+        return list(map(lambda x: VarDecl(x, self.visit(ctx.typ())), self.visit(ctx.idlist())))
+        # lst = []
+        # idlst = self.visit(ctx.idlist())
+        # for x in range(len(idlst)):
+        #     lst += [VarDecl(idlst[x], self.visit(ctx.typ()))]
+        # return lst
+
+    # // idenlist: ID COMMA idenlist | ID;
+    # def visitIdenlist(self, ctx: D96Parser.IdenlistContext):
+    #     if ctx.getChildCount() == 1:
+    #         return [Id(ctx.ID().getText())]
+    #     return [Id(ctx.ID().getText())] + self.visit(ctx.idenlist())
+
+    # blockstate: LP (statements | ) RP;
+    def visitBlockstate(self, ctx: D96Parser.BlockstateContext):
+        if ctx.statements():
+            return Block(self.visit(ctx.statements()))
+        else: return []
+
+    # statements: sta statements | sta;
+    def visitStatements(self, ctx: D96Parser.StatementsContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.sta())
+        return self.visit(ctx.sta()) + self.visit(ctx.statements())
+
+    # sta: attr | lhs | ifsta | forsta | breaksta | continuesta | returnsta | methodsta | blockstate;
+    def visitSta(self, ctx: D96Parser.StaContext):
+        if ctx.attr():
+            return self.visit(ctx.attr())
+        elif ctx.lhs():
+            return self.visit(ctx.lhs())
+        elif ctx.ifsta():
+            return self.visit(ctx.ifsta())
+        elif ctx.forsta():
+            return self.visit(ctx.forsta())
+        elif ctx.breaksta():
+            return self.visit(ctx.breaksta())
+        elif ctx.continuesta():
+            return self.visit(ctx.continuesta())
+        elif ctx.returnsta():
+            return self.visit(ctx.returnsta())
+        elif ctx.methodsta():
+            return self.visit(ctx.methodsta())
+        return [self.visit(ctx.blockstate())]
+
+    # lhs: (eleexp | instance | staatr | ID | STATIC) EQUAL expr SEMI;
+    def visitLhs(self, ctx: D96Parser.LhsContext):
+        if ctx.ID():
+            return [Assign(Id(ctx.ID().getText()), self.visit(ctx.expr())[0])]
+        elif ctx.STATIC():
+            return [Assign(Id(ctx.STATIC().getText()), self.visit(ctx.expr())[0])]
+        elif ctx.eleexp():
+            return [Assign(self.visit(ctx.eleexp())[0], self.visit(ctx.expr())[0])]
+        elif ctx.instance():
+            return [Assign(self.visit(ctx.instance()), self.visit(ctx.expr())[0])]
+        else:
+            return [Assign(self.visit(ctx.static()), self.visit(ctx.expr())[0])]
+
+    # --------------------QUAN TRONG-----------------------------   CẦN KIỂM TRA LẠI CÓ ĐỦ TRƯỜNG HỢP HAY KHÔNG?
+    # ifsta: IF LB expr RB blockstate (eliflist | );
+    def visitIfsta(self, ctx: D96Parser.IfstaContext):
+        if ctx.eliflist():
+            return [If(self.visit(ctx.expr())[0], self.visit(ctx.blockstate()), self.visit(ctx.eliflist()))]
+        return [If(self.visit(ctx.expr())[0], self.visit(ctx.blockstate()))]
+    # eliflist: ELSEIF LB expr RB blockstate eliflist | ELSE blockstate | ;
+    def visitEliflist(self, ctx: D96Parser.EliflistContext):
+        if ctx.getChildCount() == 0:
+            return []
+        elif ctx.ELSE():
+            return self.visit(ctx.blockstate())
+        return If(self.visit(ctx.expr())[0], self.visit(ctx.blockstate()), self.visit(ctx.eliflist()))
+
+    # forsta: FOREACH LB (eleexp | instance | staatr | ID | STATIC) IN expr '..' expr ( BY expr | ) RB blockstate;
+    def visitForsta(self, ctx: D96Parser.ForstaContext):
+        # intLit = self.strToInt(ctx.INT(0).getText())[0]
+        # intLit1 = self.strToInt(ctx.INT(1).getText())[0]
+        if ctx.ID():
+            express = Id(ctx.ID().getText())
+        elif ctx.STATIC():
+            express = Id(ctx.STATIC().getText())
+        elif ctx.eleexp():
+            express = self.visit(ctx.eleexp())[0]
+        elif ctx.instance():
+            express = self.visit(ctx.instance())
+        else:
+            express = self.visit(ctx.staatr())
+        if ctx.getChildCount() == 9:
+            return [For(express, self.visit(ctx.expr(0))[0], self.visit(ctx.expr(1))[0], self.visit(ctx.blockstate()), IntLiteral(1))]
+        else:
+            # intLit2 = self.strToInt(ctx.INT(2).getText())[0]
+            return [For(express, self.visit(ctx.expr(0))[0], self.visit(ctx.expr(1))[0], self.visit(ctx.blockstate()), self.visit(ctx.expr(2))[0])]
+
+    # breaksta: BREAK SEMI;
+    def visitBreaksta(self, ctx: D96Parser.BreakstaContext):
+        return [Break()]
+
+    # continuesta: CONTINUE SEMI;
+    def visitContinuesta(self, ctx: D96Parser.ContinuestaContext):
+        return [Continue()]
+
+    # returnsta: RETURN expr SEMI;
+    def visitReturnsta(self, ctx: D96Parser.ReturnstaContext):
+        return [Return(self.visit(ctx.expr())[0])]
+
+    # methodsta: (smethodi | imethodi) SEMI;
+    def visitMethodsta(self, ctx: D96Parser.MethodstaContext):
+        return self.visit(ctx.smethodi()) if ctx.smethodi() else self.visit(ctx.imethodi())
+
+    # indexedarr: ARRAY LB literals RB;
+    def visitIndexedarr(self, ctx: D96Parser.IndexedarrContext):
+        return [ArrayLiteral(self.visit(ctx.literals()))]
+
+    # literals: lit COMMA literals | lit;
+    def visitLiterals(self, ctx: D96Parser.LiteralsContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.lit())
+        return self.visit(ctx.lit()) + self.visit(ctx.literals())
+    
+    # --------------QUAN TRỌNG (CÓ THỂ PHẢI SỬA LIT THÀNH EXP) THEO FORUM-------------------
+    # lit: INT | FLOAT | TRUE | FALSE | STR;
+    def visitLit(self, ctx: D96Parser.LitContext):
+        if ctx.INT():
+            return self.strToInt(ctx.INT().getText())
+        elif ctx.FLOAT():
+            return [FloatLiteral(float(ctx.FLOAT().getText()))]
+        elif ctx.TRUE():
+            return [BooleanLiteral(True)]
+        elif ctx.FALSE():
+            return [BooleanLiteral(False)]
+        else:
+            return [StringLiteral(ctx.STR().getText())]
+
+    # multiarr: ARRAY LB arrlist RB;
+    def visitMultiarr(self, ctx: D96Parser.MultiarrContext):
+        return [ArrayLiteral(self.visit(ctx.arrlist()))]
+
+    # arrlist: arr COMMA arrlist | arr;
+    def visitArrlist(self, ctx: D96Parser.ArrlistContext):
+        if ctx.getChildCount() == 1:
+            return self.visit(ctx.arr())
+        return self.visit(ctx.arr()) + self.visit(ctx.arrlist())
+
+    # arr: multiarr | indexedarr;
+    def visitArr(self, ctx: D96Parser.ArrContext):
+        if ctx.multiarr():
+            return self.visit(ctx.multiarr())
+        return self.visit(ctx.indexedarr())
+
+    # arrdecl: ARRAY LS element COMMA size RS;
+    def visitArrdecl(self, ctx: D96Parser.ArrdeclContext):
+        return ArrayType(self.visit(ctx.size()), self.visit(ctx.element()))
+
+    # element: INTTYPE | FLOATTYPE | BOOLEAN | arrdecl | STRING;
+    def visitElement(self, ctx: D96Parser.ElementContext):
+        if ctx.BOOLEAN():
+            return BoolType()
+        elif ctx.INTTYPE():
+            return IntType()
+        elif ctx.FLOATTYPE():
+            return FloatType()
+        elif ctx.STRING():
+            return StringType()
+        else:
+            return self.visit(ctx.arrdecl())
+
+    # size: INT; // > 1 chỉ là DEC thôi hay là tất cả?
+    def visitSize(self, ctx: D96Parser.SizeContext):
+        return self.strToInt(ctx.INT().getText())[0]
+
+    # eleexp: exp indexop;
+    def visitEleexp(self, ctx: D96Parser.EleexpContext):
+        return [ArrayCell(self.visit(ctx.exp()), self.visit(ctx.indexop()))]
+
+    # indexop: LS expr RS | LS expr RS indexop;
+    def visitIndexop(self, ctx: D96Parser.IndexopContext):
+        if ctx.getChildCount() == 3:
+            return self.visit(ctx.expr())
+        return self.visit(ctx.expr()) + self.visit(ctx.indexop())
+
+    # exp: ins | imethodi | instance;
+    def visitExp(self, ctx: D96Parser.ExpContext):
+        if ctx.ins():
+            return self.visit(ctx.ins())
+        elif ctx.imethodi():
+            return self.visit(ctx.imethodi())
+        return self.visit(ctx.instance())
+
+    # instance: ins INSTANT ID;
+    def visitInstance(self, ctx: D96Parser.InstanceContext):
+        return FieldAccess(self.visit(ctx.ins()), Id(ctx.ID().getText())) 
+    
+    # ins: ID | STATIC | multiarr | indexedarr | SELF  | smethodi | staatr;
+    def visitIns(self, ctx: D96Parser.InsContext):
+        if ctx.ID():
+            return Id(ctx.ID().getText())
+        elif ctx.STATIC():
+            return Id(ctx.STATIC().getText())
+        elif ctx.SELF():
+            return SelfLiteral()
+        elif ctx.multiarr():
+            return self.visit(ctx.multiarr())
+        elif ctx.indexedarr():
+            return self.visit(ctx.indexedarr())
+        elif ctx.smethodi():
+            return self.visit(ctx.smethodi())
+        elif ctx.staatr():
+            return self.visit(ctx.staatr())
+
+    # staatr: ID STATICATTR STATIC;// nguy hiểm
+    def visitStaatr(self, ctx: D96Parser.StaatrContext):
+        return FieldAccess(Id(ctx.ID().getText()), Id(ctx.STATIC().getText())) 
+
+    # imethodi: (ins | instance) INSTANT ID LB (exprlist | ) RB;
+    def visitImethodi(self, ctx: D96Parser.ImethodiContext):
+        if ctx.exprlist():
+            if ctx.instance():
+                return [CallStmt(self.visit(ctx.instance()), Id(ctx.ID().getText()), self.visit(ctx.exprlist()))]
+            elif ctx.ins():
+                return [CallStmt(self.visit(ctx.ins()), Id(ctx.ID().getText()), self.visit(ctx.exprlist()))]
+        return [CallStmt(self.visit(ctx.instance()), Id(ctx.ID().getText()), []) if ctx.instance() else CallStmt(self.visit(ctx.ins()), Id(ctx.ID().getText()), [])]
+
+    # smethodi: ID STATICATTR STATIC LB (exprlist | ) RB; // STATIC ?
+    def visitSmethodi(self, ctx: D96Parser.SmethodiContext):
+        if ctx.exprlist():
+            return [CallStmt(Id(ctx.ID().getText()), Id(ctx.STATIC().getText()), self.visit(ctx.exprlist()))]
+        return [CallStmt(Id(ctx.ID().getText()), Id(ctx.STATIC().getText()), [])]
+
+    # objcreate: NEW ID LB (exprlist | ) RB;
+    def visitObjcreate(self, ctx: D96Parser.ObjcreateContext):
+        if ctx.exprlist():
+            return [NewExpr(Id(ctx.ID().getText()), self.visit(ctx.exprlist()))]
+        return [NewExpr(Id(ctx.ID().getText()), [])]

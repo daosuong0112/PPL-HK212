@@ -1,0 +1,263 @@
+1.
+class StaticCheck(Visitor):
+
+    def visitProgram(self,ctx:Program,o:object):
+        o = []
+        for decl in ctx.decl:
+            self.visit(decl, o)
+
+    def visitVarDecl(self,ctx:VarDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredDeclaration(ctx.name)
+        o += [ctx.name]
+
+    def visitConstDecl(self,ctx:ConstDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredDeclaration(ctx.name)
+        o += [ctx.name]
+
+    def visitIntType(self,ctx:IntType,o:object):pass
+
+    def visitFloatType(self,ctx:FloatType,o:object):pass
+
+    def visitIntLit(self,ctx:IntLit,o:object):pass
+
+2.
+class StaticCheck(Visitor):
+
+    def visitProgram(self,ctx:Program,o:object):
+        o = []
+        for decl in ctx.decl:
+            self.visit(decl, o)
+
+    def visitVarDecl(self,ctx:VarDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredVariable(ctx.name)
+        o += [ctx.name]
+
+    def visitConstDecl(self,ctx:ConstDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredConstant(ctx.name)
+        o += [ctx.name]
+
+    def visitIntType(self,ctx:IntType,o:object):pass
+
+    def visitFloatType(self,ctx:FloatType,o:object):pass
+
+    def visitIntLit(self,ctx:IntLit,o:object):pass
+
+3.
+class StaticCheck(Visitor):
+
+    def visitProgram(self,ctx:Program,o:object):
+        o = []
+        for decl in ctx.decl:
+            self.visit(decl, o)
+
+    def visitVarDecl(self,ctx:VarDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredVariable(ctx.name)
+        o += [ctx.name]
+
+    def visitConstDecl(self,ctx:ConstDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredConstant(ctx.name)
+        o += [ctx.name]
+
+    def visitFuncDecl(self,ctx:FuncDecl,o:object):
+        if ctx.name in o:
+            raise RedeclaredFunction(ctx.name)
+        o += [ctx.name]
+        
+        new_o = []
+        for param in ctx.param:
+            self.visit(param, new_o)
+        for decl_body in ctx.body:
+            self.visit(decl_body, new_o)
+
+    def visitIntType(self,ctx:IntType,o:object):pass
+
+    def visitFloatType(self,ctx:FloatType,o:object):pass
+
+    def visitIntLit(self,ctx:IntLit,o:object):pass
+
+4.
+class StaticCheck(Visitor):
+
+    def visitProgram(self,ctx:Program,o:object):
+        o = [[]]
+        for decl in ctx.decl:
+            self.visit(decl, o)
+
+    def visitVarDecl(self,ctx:VarDecl,o:object):
+        if ctx.name in o[0]:
+            raise RedeclaredVariable(ctx.name)
+        o[0] += [ctx.name]
+
+    def visitConstDecl(self,ctx:ConstDecl,o:object):
+        if ctx.name in o[0]:
+            raise RedeclaredConstant(ctx.name)
+        o[0] += [ctx.name]
+
+    def visitFuncDecl(self,ctx:FuncDecl,o:object):
+        if ctx.name in o[0]:
+            raise RedeclaredFunction(ctx.name)
+        o[0] += [ctx.name]
+        
+        temp_o = [[]] + o
+        for param in ctx.param:
+            self.visit(param, temp_o)
+        for decl in ctx.body[0]:
+            self.visit(decl, temp_o)
+        for id in ctx.body[1]:
+            self.visit(id, temp_o)
+        
+    def visitIntType(self,ctx:IntType,o:object):pass
+
+    def visitFloatType(self,ctx:FloatType,o:object):pass
+
+    def visitIntLit(self,ctx:IntLit,o:object):pass
+
+    def visitId(self,ctx:Id,o:object):
+        for env in o:
+            if ctx.name in env: return
+        raise UndeclaredIdentifier(ctx.name)
+
+---------------------------------------
+"""class Program: #decl:List[ClassDecl]
+
+class Decl(ABC): #abstract class
+
+class ClassDecl:#name:str,parent:str,mem:List[Decl]
+
+class VarDecl(Decl): #name:str,typ:Type
+
+class FuncDecl(Decl): #name:str,param:List[VarDecl],body:Tuple(List[Decl],List[Expr])
+
+class Type(ABC): #abstract class
+
+class IntType(Type)
+
+class FloatType(Type)
+
+class ClassType(Type):#name:str
+
+class Expr(ABC): #abstract class
+
+class Lit(Expr): #abstract class
+
+class IntLit(Lit): #val:int
+
+class Id(Expr): #name:str
+
+class FieldAccess(Expr): #exp:Expr,field:str"""
+# class UndeclaredIdentifier(Exception): #name:str
+# class UndeclaredField(Exception): #name:str
+# class UndeclaredClass(Exception): #name:str
+class StaticCheck(Visitor):
+    # class Program: decl: List[ClassDecl]
+    def visitFunc(self, temp, o):
+        for func in temp.items():
+            decls = func[1][0]
+            exprs = func[1][1]
+            for expr in exprs:
+                val = self.visit(expr, decls)
+                if len(val) != 1:
+                    if val[0] not in list(decls["VarDecl"].keys()):
+                        print("hihi")
+                        raise UndeclaredField(val[0])
+                    envir = decls["VarDecl"][val[0]]
+                    parent_envir = envir
+                    for var in val[1:]:
+                        flag = False
+                        while parent_envir != "":
+                            if var in list(o[parent_envir][1]["VarDecl"].keys()):
+                                flag = True
+                            parent_envir = o[parent_envir][0]
+                        if not flag:
+                            raise UndeclaredField(var)
+                        #envir = o[envir][1]["VarDecl"][var]
+                        #parent_envir = envir
+            self.visitFunc(decls["FuncDecl"], o)
+    def visitProgram(self, ctx:Program, o:object):
+        o = {}
+        for decl in ctx.decl:
+            self.visit(decl, o)
+        class_list = list(o.keys())
+        for decl in ctx.decl:
+            if decl.parent != "" and decl.parent != decl.name and decl.parent not in class_list:
+                raise UndeclaredClass(decl.parent)
+            body_class = o[decl.name][1]
+            var_decls = body_class["VarDecl"]
+            for var_decl in var_decls.items():
+                typ = var_decl[1]
+                if typ != "Int" and typ != "Float" and typ not in class_list:
+                    raise UndeclaredClass(typ)
+
+            self.visitFunc(body_class["FuncDecl"], o)
+
+    # class ClassDecl: name:str, parent:str, mem:List[Decl]
+    def visitClassDecl(self, ctx:ClassDecl, o:object):
+        class_name = ctx.name
+        if class_name in list(o.keys()):
+            raise RedeclaredField(class_name)
+        
+        members = {
+            "VarDecl": {},
+            "FuncDecl": {}
+        }
+        for member in ctx.mem:
+            self.visit(member, members)
+        
+        o[class_name] = (ctx.parent, members)
+
+    # class VarDecl(Decl): #name:str,typ:Type
+    def visitVarDecl(self, ctx:VarDecl, o:object):
+        var_name = ctx.name
+        if var_name in list(o["VarDecl"].keys()):
+            raise RedeclaredField(var_name)
+        if var_name in list(o["FuncDecl"].keys()):
+            raise RedeclaredField(var_name)
+
+        o["VarDecl"][var_name] = self.visit(ctx.typ, o)
+
+    # class FuncDecl(Decl): #name:str,param:List[VarDecl],body:Tuple(List[Decl],List[Expr])
+    def visitFuncDecl(self,ctx:FuncDecl,o:object):
+        func_name = ctx.name
+        if func_name in list(o["VarDecl"].keys()):
+            raise RedeclaredMethod(func_name)
+        if func_name in list(o["FuncDecl"].keys()):
+            raise RedeclaredMethod(func_name)
+
+        decls = {
+            "VarDecl": {},
+            "FuncDecl": {}
+        }
+        for param in ctx.param:
+            self.visit(param, decls)
+        for decl in ctx.body[0]:
+            self.visit(decl, decls)
+
+        o["FuncDecl"][func_name] = (decls, ctx.body[1])
+
+    def visitIntType(self, ctx:IntType, o:object):
+        return "Int"
+
+    def visitFloatType(self, ctx:FloatType, o:object):
+        return "Float"
+
+    # class ClassType(Type): name:str
+    def visitClassType(self, ctx:ClassType, o:object):
+        return ctx.name
+    
+    # class IntLit(Lit): val:int
+    def visitIntLit(self,ctx:IntLit,o:object):
+        return [ctx.val]
+
+    # class Id(Expr): name:str
+    def visitId(self, ctx:Id, o:object):
+        return [ctx.name]
+
+    # class FieldAccess(Expr): exp:Expr, field:str
+    def visitFieldAccess(self, ctx:FieldAccess, o:object):            
+        return self.visit(ctx.exp, o) + [ctx.field]

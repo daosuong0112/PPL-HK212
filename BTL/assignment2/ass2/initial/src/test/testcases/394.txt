@@ -1,0 +1,6 @@
+ Class Program {
+                        getArea() {
+                            ##Val a,b : A = New A(a,b), New A(a,c);##
+                            Val a, b: Int = 2 + 5 - 9, 3 + 2 * 0;
+                        }
+                    } 

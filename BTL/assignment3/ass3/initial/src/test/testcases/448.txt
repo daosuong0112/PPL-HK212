@@ -1,0 +1,7 @@
+
+        void main(){
+            float a;
+            boolean b;
+            a + b;
+        }
+        
